@@ -15,8 +15,7 @@ import {
   deviceWidth,
   MAIN_THEME_COLOR,
 } from "../../styles/mobile";
-import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
-import { faArrowLeft, faLock } from "@fortawesome/free-solid-svg-icons";
+import { AntDesign, Entypo } from '@expo/vector-icons';
 import { withAuth } from "../Context/AuthContext";
 import Verify from "./Verify";
 
@@ -126,7 +125,7 @@ export function Login({ isVisible, setIsVisible }) {
           style={styles.backButton}
           onPress={() => setIsVisible(false)}
         >
-          <FontAwesomeIcon icon={faArrowLeft} size={deviceWidth * 0.07} />
+          <AntDesign name="arrowleft" size={deviceWidth * 0.07} color="black" />
         </TouchableOpacity>
         <View
           style={{
@@ -135,11 +134,7 @@ export function Login({ isVisible, setIsVisible }) {
             backgroundColor: SATISFIED_GREEN_WITH_OPACITY,
           }}
         >
-          <FontAwesomeIcon
-            icon={faLock}
-            size={deviceWidth * 0.07}
-            color={SATISFIED_GREEN}
-          />
+          <Entypo name="lock" size={deviceWidth * 0.07} color={SATISFIED_GREEN} />
         </View>
         <Text
           style={{

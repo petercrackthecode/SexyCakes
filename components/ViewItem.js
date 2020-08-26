@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   View,
   ScrollView,
@@ -9,15 +9,10 @@ import {
   FlatList,
   Modal,
   Image,
-  Alert
+  Alert,
+  ActivityIndicator,
 } from "react-native";
-import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
-import {
-  faChevronDown,
-  faMinus,
-  faPlus,
-} from "@fortawesome/free-solid-svg-icons";
-
+import { Entypo } from "@expo/vector-icons";
 import { GlobalContext } from "../components/Context/globalContext";
 import {
   deviceWidth,
@@ -28,52 +23,88 @@ import {
 
 import RNPickerSelect from "react-native-picker-select";
 import { LinearGradient } from "expo-linear-gradient";
+import { Checkbox } from "react-native-paper";
 import Swiper from "react-native-swiper";
+
+function DropDowns() {
+  return (
+    <View
+      style={{
+        justifyContent: "flex-start",
+        alignItems: "flex-start",
+        display: "flex",
+        width: deviceWidth,
+        paddingHorizontal: deviceWidth * 0.05,
+      }}
+    >
+      <View style={{ flexDirection: "row", paddingBottom: 10 }}>
+        <Text
+          style={{
+            ...styles.titletext,
+            fontSize: deviceWidth * 0.05,
+          }}
+        >
+          Topping
+        </Text>
+        <Text style={{ fontSize: deviceWidth * 0.05, marginTop: -4 }}>
+          {" "}
+          (dropDowns)
+        </Text>
+      </View>
+      <RNPickerSelect
+        style={{
+          width: deviceWidth,
+          height: 50,
+          backgroundColor: "red",
+        }}
+        onValueChange={(value) => setDropDown(value)}
+        items={topping}
+      >
+        <View style={localStyles.picker}>
+          <Text style={{ fontSize: deviceWidth * 0.05 }}>
+            {/*dropDowns !== "" ? dropDowns : "Select a size"*/}
+          </Text>
+          <Entypo name="chevron-down" size={deviceWidth * 0.05} color="black" />
+        </View>
+      </RNPickerSelect>
+    </View>
+  );
+}
 
 export function ViewItem({
   images,
-  title,
-  price,
+  name,
+  base_price,
   description,
-  sizes,
-  colors,
+  variants,
   isVisible,
   setIsVisible,
 }) {
-  const mySizes = Array.isArray(sizes)
-    ? sizes.map((size) => ({
-        label: size.size,
-        value: size.size,
-        key: size.size,
-        displayValue: true,
+  const topping = variants
+    ? variants[0]["variants"].map((variant) => ({
+        label: `${variant.name} ${
+          variant.price ? "+ $" + variant.price : "(Free)"
+        }`,
+        value: `${variant.name} ${
+          variant.price ? "+ $" + variant.price : "(Free)"
+        }`,
       }))
     : [{ label: "loading", value: "loading", key: "loading" }];
-
-  const myColors = Array.isArray(colors)
-    ? colors.map((color) => ({
-        label: color,
-        value: color,
-        key: color,
-        displayValue: true,
-      }))
-    : [{ label: "loading", value: "loading", key: "loading" }];
-
-  const [currentSize, setCurrentSize] = useState("");
-  const [currentColor, setCurrentColor] = useState("");
+  const [dropDowns, setDropDown] = useState({});
   const [currentAmount, setCurrentAmount] = useState(1);
+  const [addOn, setAddOn] = useState();
 
   const cleanUpDataWhenExit = () => {
-    setCurrentSize("");
-    setCurrentColor("");
+    setDropDown("");
     setCurrentAmount(1);
+    console.log(typeof variants);
   };
 
   const addToCart = (context) => {
     const newItem = {
         item: context.viewedItem,
         amount: currentAmount,
-        size: currentSize,
-        color: currentColor,
+        size: dropDowns,
       },
       itemId = context.viewedItem.product_id;
     let newCart = context.cart;
@@ -84,26 +115,31 @@ export function ViewItem({
     createAlert("Item added", `${title} is added to your cart!`);
   };
 
-  const createAlert= (title, message) => (
-    Alert.alert(title, message, [
-      {
-        text: 'Cancel',
-        style: 'cancel'
-      }, {
-        text: 'OK'
-      }
-    ], 
-    {cancelale: false})
-  );
+  const createAlert = (title, message) =>
+    Alert.alert(
+      title,
+      message,
+      [
+        {
+          text: "Cancel",
+          style: "cancel",
+        },
+        {
+          text: "OK",
+        },
+      ],
+      { cancelale: false }
+    );
 
   return (
     <GlobalContext.Consumer>
       {(context) => (
         <Modal animationType={"slide"} visible={isVisible}>
-          <ScrollView>
+          {variants ? (
             <View
               style={{
                 ...styles.fullPageContainer,
+                paddingHorizontal: 0,
                 backgroundColor: "transparent",
                 justifyContent: "space-between",
               }}
@@ -118,196 +154,143 @@ export function ViewItem({
                 <Text style={{ fontSize: deviceWidth * 0.1 }}>X</Text>
               </TouchableOpacity>
               <View>
-                {typeof images === "string" || Array.isArray(images) ? (
-                  typeof images === "string" ? (
-                    <Image
-                      source={{ uri: images }}
-                      resizeMode="contain"
-                      style={localStyles.image}
-                    />
-                  ) : (
-                    <Swiper showsButtons={true} loop={false}>
-                      {images.map((imageUri) => (
-                        <Image
-                          source={{ uri: imageUri }}
-                          resizeMode="contain"
-                          style={localStyles.image}
-                          key={imageUri}
-                        />
-                      ))}
-                    </Swiper>
-                  )
-                ) : (
-                  <Text>Error loading images</Text>
-                )}
+                <Image
+                  source={require("../assets/images/sexy_cakes_logo.jpg")}
+                  resizeMode="cover"
+                  style={localStyles.image}
+                />
               </View>
               <LinearGradient
                 colors={["#4BC0C8", "#C779D0", "#FEAC5E"]}
                 style={{
-                  ...styles.columnContainer,
+                  position: "absolute",
+                  zIndex: 100,
+                  bottom: 0,
+                  left: 0,
                   height: deviceHeight * 0.6,
                   borderRadius: deviceWidth * 0.1,
                 }}
               >
-                <View
-                  style={{
-                    ...styles.rowContainer,
-                    paddingHorizontal: deviceHeight * 0.03,
-                  }}
-                >
-                  <Text
-                    style={{
-                      ...styles.titletext,
-                      fontSize: deviceWidth * 0.05,
-                      marginRight: deviceWidth * 0.1,
-                      paddingTop: 7,
-                    }}
-                  >
-                    {title}
-                  </Text>
-                  <Text style={{ fontSize: deviceWidth * 0.05 }}>${price}</Text>
-                </View>
-                <Text style={{ paddingHorizontal: deviceWidth * 0.05 }}>
-                  Lorem itspum dolor lorem ispus Lorem itspum dolor lorem ispus
-                  Lorem itspum dolor lorem. Lorem itspum dolor lorem ispus
-                </Text>
-                <View
-                  style={{
-                    justifyContent: "flex-start",
-                    alignItems: "flex-start",
-                    display: "flex",
-                    width: deviceWidth,
-                    paddingHorizontal: deviceWidth * 0.05,
-                  }}
-                >
-                  <Text
-                    style={{
-                      ...styles.titletext,
-                      fontSize: deviceWidth * 0.05,
-                      marginRight: deviceWidth * 0.1,
-                      paddingTop: 7,
-                    }}
-                  >
-                    Size
-                  </Text>
-                  <RNPickerSelect
-                    style={{
-                      width: deviceWidth,
-                      height: 50,
-                      backgroundColor: "red",
-                    }}
-                    onValueChange={(value) => setCurrentSize(value)}
-                    items={mySizes}
-                  >
-                    <View style={localStyles.picker}>
-                      <Text style={{ fontSize: deviceWidth * 0.05 }}>
-                        {currentSize !== "" ? currentSize : "Select a size"}
-                      </Text>
-                      <FontAwesomeIcon icon={faChevronDown} />
-                    </View>
-                  </RNPickerSelect>
-                </View>
-                <View
-                  style={{
-                    justifyContent: "flex-start",
-                    alignItems: "flex-start",
-                    display: "flex",
-                    width: deviceWidth,
-                    paddingHorizontal: deviceWidth * 0.05,
-                  }}
-                >
-                  <Text
-                    style={{
-                      ...styles.titletext,
-                      fontSize: deviceWidth * 0.05,
-                      marginRight: deviceWidth * 0.1,
-                      paddingTop: 7,
-                    }}
-                  >
-                    Color
-                  </Text>
-                  <RNPickerSelect
-                    style={{
-                      width: deviceWidth,
-                      height: 50,
-                      backgroundColor: "red",
-                    }}
-                    onValueChange={(value) => setCurrentColor(value)}
-                    items={myColors}
-                  >
-                    <View style={localStyles.picker}>
-                      <Text style={{ fontSize: deviceWidth * 0.05 }}>
-                        {currentColor !== "" ? currentColor : "Choose a color"}
-                      </Text>
-                      <FontAwesomeIcon icon={faChevronDown} />
-                    </View>
-                  </RNPickerSelect>
-                </View>
-                <View
-                  style={{
-                    ...styles.rowContainer,
-                    marginVertical: deviceHeight * 0.03,
+                <ScrollView
+                  contentContainerStyle={{
+                    ...styles.columnContainer,
+                    justifyContent: "space-evenly",
+                    height: "100%",
                   }}
                 >
                   <View
                     style={{
                       ...styles.rowContainer,
-                      justifyContent: "space-around",
-                      width: "50%",
+                      paddingHorizontal: deviceHeight * 0.03,
                     }}
                   >
-                    <TouchableOpacity
-                      onPress={() => {
-                        currentAmount > 1
-                          ? setCurrentAmount(currentAmount - 1)
-                          : null;
-                      }}
-                    >
-                      <FontAwesomeIcon
-                        icon={faMinus}
-                        color={currentAmount > 1 ? MAIN_THEME_COLOR : "black"}
-                      />
-                    </TouchableOpacity>
                     <Text
                       style={{
-                        fontSize: deviceWidth * 0.05,
-                        fontWeight: "bold",
+                        ...styles.titletext,
+                        fontSize: deviceWidth * 0.06,
+                        marginRight: deviceWidth * 0.1,
+                        paddingTop: 7,
                       }}
                     >
-                      {currentAmount}
+                      {name}
                     </Text>
-                    <TouchableOpacity
-                      onPress={() => setCurrentAmount(currentAmount + 1)}
-                    >
-                      <FontAwesomeIcon icon={faPlus} color={MAIN_THEME_COLOR} />
-                    </TouchableOpacity>
+                    <Text style={{ fontSize: deviceWidth * 0.06 }}>
+                      $ {base_price}
+                    </Text>
                   </View>
-                  <TouchableOpacity
+                  <Text
                     style={{
-                      ...localStyles.addToCartBtn,
-                      backgroundColor:
-                        currentSize === "" || currentColor === ""
-                          ? "#a6a6a6"
-                          : MAIN_THEME_COLOR,
+                      paddingHorizontal: deviceWidth * 0.05,
+                      ...styles.gridtext,
                     }}
-                    onPress={() => addToCart(context)}
-                    disabled={currentSize === "" || currentColor === ""}
+                  >
+                    {description}
+                  </Text>
+                  <View
+                    style={{
+                      justifyContent: "flex-start",
+                      alignItems: "flex-start",
+                      display: "flex",
+                      width: deviceWidth,
+                      paddingHorizontal: deviceWidth * 0.05,
+                    }}
                   >
                     <Text
                       style={{
-                        color:
-                          currentSize === "" || currentColor === ""
-                            ? "white"
-                            : "black",
+                        ...styles.titletext,
+                        fontSize: deviceWidth * 0.05,
+                        marginRight: deviceWidth * 0.1,
+                        paddingTop: 7,
                       }}
                     >
-                      Add To Cart
+                      Add-on
                     </Text>
-                  </TouchableOpacity>
-                </View>
+                  </View>
+                  <View
+                    style={{
+                      ...styles.rowContainer,
+                      marginVertical: deviceHeight * 0.03,
+                    }}
+                  >
+                    <View
+                      style={{
+                        ...styles.rowContainer,
+                        justifyContent: "space-around",
+                        width: "50%",
+                      }}
+                    >
+                      <TouchableOpacity
+                        onPress={() => {
+                          currentAmount > 1
+                            ? setCurrentAmount(currentAmount - 1)
+                            : null;
+                        }}
+                      >
+                        <Entypo
+                          name="minus"
+                          size={24}
+                          color={currentAmount > 1 ? MAIN_THEME_COLOR : "black"}
+                        />
+                      </TouchableOpacity>
+                      <Text
+                        style={{
+                          fontSize: deviceWidth * 0.05,
+                          fontWeight: "bold",
+                        }}
+                      >
+                        {currentAmount}
+                      </Text>
+                      <TouchableOpacity
+                        onPress={() => setCurrentAmount(currentAmount + 1)}
+                      >
+                        <Entypo name="plus" color={MAIN_THEME_COLOR} />
+                      </TouchableOpacity>
+                    </View>
+                  </View>
+                </ScrollView>
+                <TouchableOpacity
+                  style={{
+                    ...localStyles.addToCartBtn,
+                    backgroundColor:
+                      dropDowns === "" ? "#a6a6a6" : MAIN_THEME_COLOR,
+                  }}
+                  onPress={() => addToCart(context)}
+                  disabled={dropDowns === ""}
+                >
+                  <Text
+                    style={{
+                      color: dropDowns === "" ? "white" : "black",
+                    }}
+                  >
+                    Add To Cart
+                  </Text>
+                  <Text>{variants.toString()}</Text>
+                </TouchableOpacity>
               </LinearGradient>
             </View>
-          </ScrollView>
+          ) : (
+            <ActivityIndicator size="large" color={MAIN_THEME_COLOR} />
+          )}
         </Modal>
       )}
     </GlobalContext.Consumer>
@@ -337,8 +320,12 @@ const localStyles = StyleSheet.create({
     alignItems: "center",
   },
   addToCartBtn: {
-    width: 150,
-    height: deviceHeight * 0.07,
+    height: 80,
+    width: "100%",
+    position: "absolute",
+    bottom: 0,
+    left: 0,
+    zIndex: 200,
     borderRadius: deviceWidth * 0.07,
     padding: deviceWidth * 0.02,
     alignItems: "center",

@@ -160,7 +160,6 @@ export default function StoreView({ navigation }) {
         >
           <InstantSearch searchClient={searchClient} indexName="dev_ULA">
             <SearchBox width={deviceWidth * 0.8} placeholder="Search Stores"/>
-            <Configure filters={`inventory:${context.currentStore.Store_id}`}/>
             <FlatList style={{ paddingHorizontal: deviceWidth * 0.1 }}
               ListHeaderComponent={<Tag/>}
               data={DATA}

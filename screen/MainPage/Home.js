@@ -20,13 +20,12 @@ import {
   GlobalContext,
 } from "../../components/Context/globalContext";
 import {ProvideAuth, withAuth} from '../../components/Context/AuthContext';
-import {FontAwesomeIcon} from '@fortawesome/react-native-fontawesome';
-import { faShoppingCart, faUser, faHome } from '@fortawesome/free-solid-svg-icons';
-import { InstantSearch, Configure } from "react-instantsearch-native";
+import { Entypo, MaterialCommunityIcons, Foundation } from '@expo/vector-icons';
+import { InstantSearch } from "react-instantsearch-native";
 import SearchBox from "../../components/Search";
-import Stores from "../../components/Stores";
 import Cart from "../../components/Cart";
 import Account from "../../components/Account";
+import Items from "../../components/Items";
 
 const zipCodes = require("zipcodes");
 
@@ -42,58 +41,6 @@ const DATA = [
   },
 ];
 
-// the default distance to scan around the latitude and longitude
-const DEFAULT_RADIUS = 20000;
-
-// convert the current zip code to Latitude and longtitude
-const zipCodesToLatLong = (zip) => {
-  const result = zipCodes.lookup(zip);
-
-  return {
-    latitude: result.latitude,
-    longitude: result.longitude,
-  };
-};
-
-function Banner() {
-  return (
-    <View
-      style={{
-        ...styles.rowContainer,
-        width: deviceWidth,
-        height: deviceHeight * 0.3,
-        marginVertical: deviceHeight * 0.05,
-      }}
-    >
-      <View
-        style={{ width: "30%", height: "100%", backgroundColor: "transparent" }}
-      ></View>
-      <View
-        style={{
-          ...styles.columnContainer,
-          width: "70%",
-          height: "100%",
-          backgroundColor: MAIN_THEME_COLOR,
-          paddingHorizontal: "12%",
-        }}
-      >
-        <View style={{ marginBottom: 5 }}>
-          <Text style={localStyles.titleText}>Tap. Order. Smile.</Text>
-        </View>
-        <Text style={localStyles.gridText}>
-          Bringing you the brands you love, fast and easy.
-        </Text>
-      </View>
-      <View style={{ position: "absolute", start: deviceWidth * 0.12 }}>
-        <Image
-          source={require("../../assets/images/Shipping.png")}
-          style={localStyles.bannerImage}
-        />
-      </View>
-    </View>
-  );
-}
-
 const searchClient = algoliasearch(
   "6U6YMVK0BE",
   "64c2fecd13dc358cb3ff440fc4865350"
@@ -103,7 +50,6 @@ function Shopping({ navigation }) {
   return (
     <withAuth.Consumer>
       {(context) => {
-        const {latitude, longitude} = zipCodesToLatLong(context.address.zipCode);
         return (
           <View
             style={{
@@ -113,21 +59,16 @@ function Shopping({ navigation }) {
               paddingHorizontal: 0,
             }}
           >
-            <InstantSearch searchClient={searchClient} indexName="stores">
+            <InstantSearch searchClient={searchClient} indexName="Sexycakes">
               <SearchBox
                 width={deviceWidth * 0.8}
-                placeholder="Search Stores"
+                placeholder="Search Grub"
               />
-              <Configure aroundLatLng={`${latitude}, ${longitude}`} aroundRadius={DEFAULT_RADIUS}/>
               <FlatList
                 data={DATA}
                 ListEmptyComponent={() => <Text>No item available</Text>}
-                ListHeaderComponent={() => <Banner />}
-                renderItem={(item) => (
-                  <Stores
-                    navigation={navigation}
-                    zipCode={context.address.zipCode}
-                  />
+                renderItem={() => (
+                  <Items/>
                 )}
                 keyExtractor={(item) => item.id}
               />
@@ -142,11 +83,7 @@ function Shopping({ navigation }) {
 function CartIcon({ notifications, focused }) {
   return (
     <View>
-      <FontAwesomeIcon
-        icon={faShoppingCart}
-        size={deviceWidth * (focused ? 0.11 : 0.1)}
-        color={focused ? MAIN_THEME_COLOR : "gray"}
-      />
+      <Foundation name="shopping-cart" size={deviceWidth * (focused ? 0.11 : 0.1)} color={focused ? MAIN_THEME_COLOR : "gray"} />
       {notifications > 0 && (
         <View
           style={{
@@ -179,11 +116,7 @@ export default function Home({ navigation, route }) {
             tabBarIcon: ({ focused, color, size }) => {
               if (route.name === "Shopping") {
                 return (
-                  <FontAwesomeIcon
-                    icon={faHome}
-                    size={deviceWidth * (focused ? 0.11 : 0.1)}
-                    color={focused ? MAIN_THEME_COLOR : "gray"}
-                  />
+                  <Entypo name="home" size={deviceWidth * (focused ? 0.11 : 0.1)} color={focused ? MAIN_THEME_COLOR : "gray"} />
                 );
               } else if (route.name === "Cart") {
                 return (
@@ -194,11 +127,7 @@ export default function Home({ navigation, route }) {
                 );
               } else {
                 return (
-                  <FontAwesomeIcon
-                    icon={faUser}
-                    size={deviceWidth * (focused ? 0.11 : 0.1)}
-                    color={focused ? MAIN_THEME_COLOR : "gray"}
-                  />
+                  <MaterialCommunityIcons name="account" size={deviceWidth * (focused ? 0.11 : 0.1)} color={focused ? MAIN_THEME_COLOR : "gray"} />
                 );
               }
             },

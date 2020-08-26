@@ -15,16 +15,9 @@ import {
   deviceWidth,
   MAIN_THEME_COLOR,
 } from "../styles/mobile";
-
-import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
-import { FontAwesome5 } from "@expo/vector-icons";
+import { Entypo } from '@expo/vector-icons';
+import { AntDesign } from '@expo/vector-icons';
 import { MaterialCommunityIcons } from "@expo/vector-icons";
-import {
-  faChevronDown,
-  faMinus,
-  faPlus,
-  faTrash,
-} from "@fortawesome/free-solid-svg-icons";
 
 import {
   GlobalContextProvider,
@@ -73,10 +66,7 @@ function Card({ itemId, calculateSubTotal }) {
                   }
                 }}
               >
-                <FontAwesomeIcon
-                  icon={faMinus}
-                  color={amount > 1 ? MAIN_THEME_COLOR : "black"}
-                />
+                <Entypo name="minus" color={amount > 1 ? MAIN_THEME_COLOR : "black"} />
               </TouchableOpacity>
               <Text
                 style={{ fontSize: deviceWidth * 0.05, fontWeight: "bold" }}
@@ -97,7 +87,7 @@ function Card({ itemId, calculateSubTotal }) {
                   calculateSubTotal(context.cart);
                 }}
               >
-                <FontAwesomeIcon icon={faPlus} color={MAIN_THEME_COLOR} />
+                <AntDesign name="plus" color={MAIN_THEME_COLOR} />
               </TouchableOpacity>
             </View>
             <Text>Size: {size}</Text>
@@ -114,11 +104,7 @@ function Card({ itemId, calculateSubTotal }) {
                 calculateSubTotal(context.cart);
               }}
             >
-              <FontAwesome5
-                icon={faTrash}
-                size={deviceWidth * 0.05}
-                color={MAIN_THEME_COLOR}
-              />
+              <Entypo name="trash" size={deviceWidth * 0.05} color={MAIN_THEME_COLOR} />
             </TouchableOpacity>
           </View>
         );

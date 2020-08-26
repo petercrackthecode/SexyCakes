@@ -6,8 +6,7 @@ import {
   TouchableOpacity,
   StyleSheet,
 } from "react-native";
-import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
-import { faSearch } from "@fortawesome/free-solid-svg-icons";
+import { AntDesign } from '@expo/vector-icons';
 import {
   deviceWidth,
   deviceHeight,
@@ -38,11 +37,7 @@ function SearchBox({ currentRefinement, refine, width, placeholder}) {
   return (
     <View style={{ ...localStyles.search, width: width}}>
       <TouchableOpacity>
-        <FontAwesomeIcon
-          icon={faSearch}
-          color={MAIN_THEME_COLOR}
-          style={{ backgroundColor: "transparent", minHeight: "100%" }}
-        />
+        <AntDesign name="search1" color={MAIN_THEME_COLOR} style={{ backgroundColor: "transparent"}}/>
       </TouchableOpacity>
       <TextInput
         placeholder={placeholder}

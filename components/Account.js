@@ -17,8 +17,7 @@ import {
 } from "../styles/mobile";
 import { withAuth } from "./Context/AuthContext";
 
-import {FontAwesomeIcon} from '@fortawesome/react-native-fontawesome';
-import { faChevronRight, faStar } from '@fortawesome/free-solid-svg-icons';
+import { Entypo, AntDesign } from '@expo/vector-icons';
 import { createStackNavigator } from "@react-navigation/stack";
 import { Login } from "./Login/Login";
 import { Rewards } from "./AccountList/Rewards";
@@ -57,7 +56,7 @@ const Link = ({ item, navigation }) => {
             <Text style={{ fontSize: deviceWidth * 0.05 }}>{item}</Text>
           </View>
           <View style={{ float: "right" }}>
-            <FontAwesomeIcon icon={faChevronRight} size={deviceWidth * 0.05} color='black'/>
+            <Entypo name="chevron-right" size={deviceWidth * 0.05} color="black" />
           </View>
         </TouchableOpacity>
       )}
@@ -107,7 +106,7 @@ function AccountList({ navigation }) {
                     marginTop: 10,
                   }}
                 >
-                  <FontAwesomeIcon icon={faStar} size={deviceWidth * 0.07} color={MAIN_THEME_COLOR}/>
+                  <AntDesign name="star" size={deviceWidth * 0.07} color={MAIN_THEME_COLOR} />
                   <Text
                     style={{ paddingLeft: 10, fontSize: deviceWidth * 0.06 }}
                   >

@@ -16,8 +16,7 @@ import {
   deviceWidth,
   MAIN_THEME_COLOR,
 } from "../../styles/mobile";
-import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
-import { faArrowLeft, faLock } from "@fortawesome/free-solid-svg-icons";
+import { AntDesign } from '@expo/vector-icons';
 import { withAuth } from "../Context/AuthContext";
 import { ChangeUserInfo } from "../ChangeUserInfo";
 
@@ -52,7 +51,7 @@ export default function Verify({
               style={styles.backButton}
               onPress={() => setVerifyVisible(false)}
             >
-              <FontAwesomeIcon icon={faArrowLeft} size={deviceWidth * 0.07} />
+              <AntDesign name="arrowleft" size={deviceWidth * 0.07} color="black" />
             </TouchableOpacity>
             <Text style={{ ...styles.titletext }}>Verify your number</Text>
             <View style={{ padding: 2, boxSizing: "border-box" }}>

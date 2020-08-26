@@ -9,8 +9,6 @@ import {
   Image,
   Modal,
 } from "react-native";
-import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
-import { faSearch } from "@fortawesome/free-solid-svg-icons";
 import {
   deviceWidth,
   deviceHeight,
@@ -26,53 +24,49 @@ function Items({ hits, hasMore, refineNext }) {
   return (
     <GlobalContext.Consumer>
       {(context) => (
-        <FlatList
-          data={hits}
-          style={{ flexWrap: "wrap" }}
-          numColumns={2}
-          keyExtractor={(item) => item.product_id.toString()}
-          ListHeaderComponent={
-            <ViewItem
-              {...context.viewedItem}
-              isVisible={isModalVisible}
-              setIsVisible={setIsModalVisible}
-            />
-          }
-          onEndReached={() => hasMore && refineNext()}
-          renderItem={({ item }) => {
-            return (
-              <TouchableOpacity
-                style={{
-                  ...styles.columnContainer,
-                  width: deviceWidth * 0.4,
-                  height: deviceHeight * 0.3,
-                  padding: 5,
-                  marginVertical: deviceHeight * 0.05,
-                }}
-                onPress={() => {
-                  context.setGlobalState({
-                    ...context,
-                    viewedItem: item,
-                  });
-                  setIsModalVisible(true);
-                }}
-              >
-                <Image
-                  source={{
-                    uri:
-                      typeof item.images === "string"
-                        ? item.images
-                        : item.images[0],
+        <View style={{marginBottom: deviceHeight * 0.2}}>
+          <FlatList
+            data={hits}
+            style={{ flexWrap: "wrap" }}
+            numColumns={2}
+            keyExtractor={(item) => item.objectID.toString()}
+            ListHeaderComponent={
+              <ViewItem
+                {...context.viewedItem}
+                isVisible={isModalVisible}
+                setIsVisible={setIsModalVisible}
+              />
+            }
+            onEndReached={() => hasMore && refineNext()}
+            renderItem={({ item }) => {
+              return (
+                <TouchableOpacity
+                  style={{
+                    ...styles.columnContainer,
+                    width: deviceWidth * 0.4,
+                    height: deviceHeight * 0.3,
+                    paddingHorizontal: 5,
                   }}
-                  style={localStyles.itemImage}
-                  resizeMode="contain"
-                />
-                <Text>{item.title}</Text>
-                <Text>{`$${item.price}`}</Text>
-              </TouchableOpacity>
-            );
-          }}
-        />
+                  onPress={async () => {
+                    await context.setGlobalState({
+                      ...context,
+                      viewedItem: item,
+                    });
+                    setIsModalVisible(true);
+                  }}
+                >
+                  <Image
+                    source={require("../assets/images/sexy_cakes_logo.jpg")}
+                    style={localStyles.itemImage}
+                    resizeMode="contain"
+                  />
+                  <Text>{item.name}</Text>
+                  <Text>{`$${item.base_price}`}</Text>
+                </TouchableOpacity>
+              );
+            }}
+          />
+        </View>
       )}
     </GlobalContext.Consumer>
   );
@@ -87,7 +81,8 @@ const localStyles = StyleSheet.create({
   },
   itemImage: {
     width: "100%",
-    height: "100%",
+    height: "60%",
+    borderRadius: 10,
   },
 });
 

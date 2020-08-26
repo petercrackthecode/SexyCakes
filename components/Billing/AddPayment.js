@@ -16,9 +16,9 @@ import {
   deviceWidth,
   MAIN_THEME_COLOR,
 } from "../../styles/mobile";
-import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
+
+import { AntDesign } from '@expo/vector-icons';
 import KeyboardSpacer from "react-native-keyboard-spacer";
-import { faArrowLeft, faLock } from "@fortawesome/free-solid-svg-icons";
 import {
   CreditCardInput,
   LiteCreditCardInput,
@@ -47,7 +47,7 @@ export default function AddPayment({ isVisible, setVisible }) {
               style={styles.backButton}
               onPress={() => setVisible(false)}
             >
-              <FontAwesomeIcon icon={faArrowLeft} size={deviceWidth * 0.07} />
+              <AntDesign name="arrowleft" size={deviceWidth * 0.07} color="black" />
             </TouchableOpacity>
             <View
               style={{
