@@ -144,9 +144,15 @@ export default function Home({ navigation, route }) {
           initialRouteName="Shopping"
           style={{ backgroundColor: "blue" }}
         >
-          <Tab.Screen name="Shopping" component={Shopping} />
-          <Tab.Screen name="Cart" component={Cart} />
-          <Tab.Screen name="Account" component={Account} />
+          <Tab.Screen name="Shopping">
+            {() => <Shopping context={context}/>}
+          </Tab.Screen>
+          <Tab.Screen name="Cart">
+            {() => <Cart context={context}/>}
+          </Tab.Screen>
+          <Tab.Screen name="Account">
+            {() => <Account context={context}/>}
+          </Tab.Screen>
         </Tab.Navigator>
       )}
     </GlobalContext.Consumer>

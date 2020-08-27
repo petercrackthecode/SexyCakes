@@ -29,13 +29,13 @@ function Items({ hits, hasMore, refineNext }) {
             data={hits}
             style={{ flexWrap: "wrap" }}
             numColumns={2}
-            keyExtractor={(item) => item.objectID.toString()}
+            keyExtractor={(item, index) => item.objectID.toString()}
             ListHeaderComponent={
-              <ViewItem
+              isModalVisible ? (<ViewItem
                 {...context.viewedItem}
-                isVisible={isModalVisible}
                 setIsVisible={setIsModalVisible}
-              />
+                key={Math.floor(Math.random())}
+              />) : null
             }
             onEndReached={() => hasMore && refineNext()}
             renderItem={({ item }) => {

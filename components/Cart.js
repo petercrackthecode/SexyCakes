@@ -15,46 +15,66 @@ import {
   deviceWidth,
   MAIN_THEME_COLOR,
 } from "../styles/mobile";
-import { Entypo } from '@expo/vector-icons';
-import { AntDesign } from '@expo/vector-icons';
+import { Entypo } from "@expo/vector-icons";
+import { AntDesign } from "@expo/vector-icons";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 
 import {
-  GlobalContextProvider,
   GlobalContext,
 } from "../components/Context/globalContext";
-import { InstantSearch } from "react-instantsearch-native";
 
 const TAX_RATE = 0.09;
 
-function Card({ itemId, calculateSubTotal }) {
+const _ = require("lodash");
+
+const roundToTwoDecimal = (num) => {
+  return Math.ceil(num * 100)/100;
+}
+
+function Card({ itemId }) {
   return (
     <GlobalContext.Consumer>
       {(context) => {
-        const { item, amount, size, color } = context.cart[itemId];
+        const { item, amount } = context.cart[itemId],
+          { name } = item;
         return (
           <View style={{ ...localStyles.card }}>
-            <Image
-              source={{
-                uri: Array.isArray(item.images) ? item.images[0] : item.images,
+            <View
+              style={{
+                flex: 0.8,
+                justifyContent: "center",
+                alignItems: "center",
               }}
-              resizeMode="contain"
-              style={localStyles.image}
-            />
-            <Text>${item.price}</Text>
+            >
+              <Image
+                source={require("../assets/images/sexy_cakes_logo.jpg")}
+                resizeMode="stretch"
+                style={localStyles.image}
+              />
+              <View
+                style={{
+                  marginTop: -50,
+                }}
+              >
+                <Text style={{ fontSize: deviceWidth * 0.05 }}>{name}</Text>
+              </View>
+            </View>
             <Text style={{ fontWeight: "bold" }}>{item.title}</Text>
             <View
               style={{
                 ...styles.rowContainer,
                 width: "100%",
-                justifyContent: "space-evenly",
+                justifyContent: "space-around",
+                marginTop: 30,
               }}
             >
               <TouchableOpacity
                 onPress={() => {
                   if (amount > 1) {
-                    const newItem = context.cart[itemId];
+                    let newItem = context.cart[itemId];
                     --newItem.amount;
+                    newItem.total *= newItem.amount / (newItem.amount + 1);
+                    newItem.total= roundToTwoDecimal(newItem.total);
                     context.setGlobalState({
                       ...context,
                       cart: {
@@ -62,21 +82,27 @@ function Card({ itemId, calculateSubTotal }) {
                         [itemId]: newItem,
                       },
                     });
-                    calculateSubTotal(context.cart);
+                    console.log(`new amount = ${context.cart[itemId].amount}`);
                   }
                 }}
               >
-                <Entypo name="minus" color={amount > 1 ? MAIN_THEME_COLOR : "black"} />
+                <Entypo
+                  name="minus"
+                  color={amount > 1 ? MAIN_THEME_COLOR : "black"}
+                  size={deviceWidth * 0.06}
+                />
               </TouchableOpacity>
               <Text
-                style={{ fontSize: deviceWidth * 0.05, fontWeight: "bold" }}
+                style={{ fontSize: deviceWidth * 0.06, fontWeight: "bold" }}
               >
                 {amount}
               </Text>
               <TouchableOpacity
-                onPress={() => {
-                  const newItem = context.cart[itemId];
+                onPress={async () => {
+                  let newItem = context.cart[itemId];
                   ++newItem.amount;
+                  newItem.total *= newItem.amount / (newItem.amount - 1);
+                  newItem.total= roundToTwoDecimal(newItem.total);
                   context.setGlobalState({
                     ...context,
                     cart: {
@@ -84,14 +110,29 @@ function Card({ itemId, calculateSubTotal }) {
                       [itemId]: newItem,
                     },
                   });
-                  calculateSubTotal(context.cart);
+                  console.log(`new amount = ${context.cart[itemId].amount}`);
                 }}
               >
-                <AntDesign name="plus" color={MAIN_THEME_COLOR} />
+                <AntDesign
+                  name="plus"
+                  color={MAIN_THEME_COLOR}
+                  size={deviceWidth * 0.06}
+                />
               </TouchableOpacity>
             </View>
-            <Text>Size: {size}</Text>
-            <Text>Color: {color}</Text>
+            <View
+              style={{
+                width: "100%",
+                alignItems: "center",
+                borderWidth: 1,
+                borderRadius: 10,
+                marginTop: 5,
+              }}
+            >
+              <Text style={{ fontSize: deviceWidth * 0.06 }}>
+                $ {context.cart[itemId].total}
+              </Text>
+            </View>
             <TouchableOpacity
               style={localStyles.deleteBtn}
               onPress={() => {
@@ -101,10 +142,13 @@ function Card({ itemId, calculateSubTotal }) {
                   ...context,
                   cart: newCart,
                 });
-                calculateSubTotal(context.cart);
               }}
             >
-              <Entypo name="trash" size={deviceWidth * 0.05} color={MAIN_THEME_COLOR} />
+              <Entypo
+                name="trash"
+                size={deviceWidth * 0.05}
+                color={MAIN_THEME_COLOR}
+              />
             </TouchableOpacity>
           </View>
         );
@@ -113,57 +157,72 @@ function Card({ itemId, calculateSubTotal }) {
   );
 }
 
-export default function Cart() {
+function OrderSum({ subTotal, cart, calculateSubTotal, calculateTax, tax }) {
+  useEffect(() => {
+    (async () => {await calculateTax(cart);})();
+  }, [cart]);
+
+  return (
+    <View>
+      <Text
+        style={{
+          ...styles.titletext,
+          fontSize: deviceWidth * 0.05,
+        }}
+      >
+        Order Summary
+      </Text>
+      <Text style={{ ...styles.gridtext }}>
+        Subtotal: ${subTotal ? subTotal : calculateSubTotal(cart)}
+      </Text>
+      <Text style={{ ...styles.gridtext }}>
+        Tax: ${tax == 0 ? calculateTax() : tax}
+      </Text>
+      <Text style={{ ...styles.gridtext, fontWeight: "bold" }}>
+        Total: ${tax + subTotal}
+      </Text>
+    </View>
+  );
+}
+
+export default function Cart({context}) {
   const [subTotal, setSubtotal] = useState(0),
-    [shipping, setShipping] = useState(0),
     [tax, setTax] = useState(0);
 
   const calculateSubTotal = (cart) => {
     let newSubTotal = 0;
-    if (Object.keys(cart).length !== 0) {
+    console.log(`Object.keys(cart).length = ${Object.keys(cart).length}`);
+    Object.keys(cart).map(key => console.log(`key = ${key}`));
+    if (cart && Object.keys(cart).length !== 0) {
       Object.keys(cart).map((itemId) => {
-        const amount = cart[itemId].amount,
-          price = cart[itemId].item.price;
-        newSubTotal += amount * price;
+        const price = cart[itemId].total;
+        newSubTotal += price;
       });
     }
 
-    setSubtotal(newSubTotal);
+    newSubTotal= roundToTwoDecimal(newSubTotal);
 
+    console.log(`Hi I'm Subtotal = ${newSubTotal}`);
+
+    setSubtotal(newSubTotal);
     return newSubTotal;
   };
 
-  const calculateTax = (cart) => {
-    const newTax = subTotal * TAX_RATE;
+  useEffect(() => {
+    console.log(`context changes`);
+    console.log(`context.cart = `); 
+    // console.log(context.cart);
+    console.log(`new subTotal = ${calculateSubTotal(context.cart)}`);
+  }, [context.cart]);
+
+  useEffect(() => {
+    calculateTax();
+  }, [subTotal]);
+
+  const calculateTax = () => {
+    const newTax = roundToTwoDecimal(subTotal * TAX_RATE);
     setTax(newTax);
     return newTax;
-  };
-
-  const calculateShipping = async () => {
-    /*
-    var myHeaders = new Headers();
-    myHeaders.append("Content-Type", "application/javascript");
-
-    var raw =
-      '{\n     "pickup_address" : "202 Jeanette Lancaster Way, Charlottesville, VA, 22903",\n     "dropoff_address" : "600 McCormick Rd, Charlottesville, VA, 22904",\n    "sandbox": "true"\n}';
-
-    var requestOptions = {
-      method: "POST",
-      headers: myHeaders,
-      body: raw,
-      redirect: "follow",
-    };
-    let shippingPrice= 0;
-    await fetch(
-      "https://spyd9htiua.execute-api.us-east-2.amazonaws.com/beta/checkprice",
-      requestOptions
-    )
-      .then((response) => response.text())
-      .then((result) => {console.log(result); shippingPrice= result['fee']/100;})
-      .catch((error) => console.log("error", error));
-
-    setShipping(shippingPrice);
-    */
   };
 
   return (
@@ -206,21 +265,6 @@ export default function Cart() {
                 </View>
               ) : (
                 <View>
-                  <View
-                    style={{
-                      ...styles.rowContainer,
-                      justifyContent: "space-evenly",
-                      marginBottom: deviceHeight * 0.04,
-                    }}
-                  >
-                    <TextInput
-                      style={{ ...localStyles.textInput }}
-                      autoCorrect={false}
-                    />
-                    <TouchableOpacity style={{ ...localStyles.btn }}>
-                      <Text>Add Promo Code</Text>
-                    </TouchableOpacity>
-                  </View>
                   <Text
                     style={{
                       ...styles.titletext,
@@ -240,29 +284,17 @@ export default function Cart() {
                         <Card
                           itemId={key}
                           key={key}
-                          calculateSubTotal={calculateSubTotal}
                         />
                       ))}
                     </ScrollView>
                   </View>
-                  <Text
-                    style={{
-                      ...styles.titletext,
-                      fontSize: deviceWidth * 0.05,
-                    }}
-                  >
-                    Order Summary
-                  </Text>
-                  <Text style={{ ...styles.gridtext }}>
-                    Subtotal: $
-                    {subTotal == 0 ? calculateSubTotal(context.cart) : subTotal}
-                  </Text>
-                  <Text style={{ ...styles.gridtext }}>
-                    Tax: ${tax == 0 ? calculateTax(context.cart) : tax}
-                  </Text>
-                  <Text style={{ ...styles.gridtext, fontWeight: "bold" }}>
-                    Total: ${tax + subTotal + shipping}
-                  </Text>
+                  <OrderSum
+                    subTotal={subTotal}
+                    cart={context.cart}
+                    calculateSubTotal={calculateSubTotal}
+                    calculateTax={calculateTax}
+                    tax={tax}
+                  />
                 </View>
               )}
             </View>
@@ -284,18 +316,18 @@ export default function Cart() {
 
 const localStyles = StyleSheet.create({
   image: {
-    height: 200,
-    backgroundColor: "transparent",
+    flex: 1,
+    width: "100%",
+    borderRadius: deviceWidth * 0.05,
   },
   card: {
     width: deviceWidth * 0.5,
-    height: deviceHeight * 0.5,
+    height: deviceHeight * 0.4,
     borderWidth: 2,
     borderColor: MAIN_THEME_COLOR,
     borderRadius: deviceWidth * 0.05,
     marginHorizontal: deviceWidth * 0.02,
-    justifyContent: "center",
-    alignContent: "space-around",
+    justifyContent: "flex-start",
     position: "relative",
   },
   btn: {
@@ -321,7 +353,6 @@ const localStyles = StyleSheet.create({
     right: 0,
     alignItems: "center",
     paddingTop: 5,
-    marginTop: deviceHeight * 0.05,
     borderTopWidth: 2,
     borderTopColor: MAIN_THEME_COLOR,
   },
