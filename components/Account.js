@@ -38,18 +38,38 @@ const itemsList = [
   id: id,
 }));
 
+const DEFAULT_USER_DATA = {
+  address: {
+    zipCode: "",
+    street: "",
+    // some cities can share a zip code, so we have to point out the exact city
+    city: "",
+  },
+  stars: 0,
+  avatar: "",
+  firstName: "",
+  lastName: "",
+  phone: "",
+  email: "",
+  isLoggedIn: false,
+};
+
 const Link = ({ item, navigation }) => {
   return (
     <GlobalContext.Consumer>
       {(globalContext) => (
-        <TouchableOpacity
+        <withAuth.Consumer>
+        {authContext => 
+        (<TouchableOpacity
           style={{ ...localStyles.link, ...styles.rowContainer }}
           onPress={() => {
             globalContext.setGlobalState({
               ...globalContext,
               isMainHeaderVisible: false
             });
-            navigation.navigate(item);
+            if (item !== "Logout")
+              navigation.navigate(item);
+            else authContext.setUser(DEFAULT_USER_DATA);
           }}
         >
           <View style={{ float: "left" }}>
@@ -58,7 +78,9 @@ const Link = ({ item, navigation }) => {
           <View style={{ float: "right" }}>
             <Entypo name="chevron-right" size={deviceWidth * 0.05} color="black" />
           </View>
-        </TouchableOpacity>
+        </TouchableOpacity>)
+        }
+        </withAuth.Consumer>
       )}
     </GlobalContext.Consumer>
   );

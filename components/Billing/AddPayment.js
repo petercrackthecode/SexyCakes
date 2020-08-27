@@ -25,7 +25,10 @@ import {
 } from "react-native-input-credit-card";
 import { withAuth } from "../Context/AuthContext";
 
-export default function AddPayment({ isVisible, setVisible }) {
+export default function AddPayment({ setVisible }) {
+  const [cardInfo, setCardInfo]= useState({});  
+  const [isCardValid, setIsCardValid]= useState(true);
+
   const changeLogin = (context) => {
       context.setUser({
           ...context,
@@ -33,10 +36,25 @@ export default function AddPayment({ isVisible, setVisible }) {
       });
   };
 
+  const handleChange = (form) => {
+    setCardInfo(form);
+  }
+
+  const handleClick = (context) => {
+    if (cardInfo.valid) {
+      setIsCardValid(true);
+      changeLogin(context);
+      setVisible(false);
+    }
+    else {
+      setIsCardValid(false);
+    }
+  }
+
   return (
     <withAuth.Consumer>
       {(context) => (
-        <Modal visible={isVisible} animationType="slide">
+        <Modal visible={true} animationType="slide">
           <View
             style={{
               ...styles.fullPageContainer,
@@ -61,10 +79,12 @@ export default function AddPayment({ isVisible, setVisible }) {
                 validColor="green"
                 style={{ width: deviceWidth }}
                 cardScale={1.4}
+                onChange={handleChange}
               />
+              <Text style={{...styles.warningText, position: 'absolute', bottom: '30%', display: isCardValid ? 'none' : 'flex'}}>Invalid card information</Text>
               <TouchableOpacity
                 style={localStyles.button}
-                onPress={() => changeLogin(context)}
+                onPress={() => handleClick(context)}
               >
                 <Text style={{ fontSize: deviceWidth * 0.05 }}>Finish</Text>
               </TouchableOpacity>

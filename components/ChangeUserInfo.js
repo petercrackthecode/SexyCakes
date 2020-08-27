@@ -17,13 +17,13 @@ import {
   deviceWidth,
   MAIN_THEME_COLOR,
 } from "../styles/mobile";
-import { AntDesign } from '@expo/vector-icons';
+import { AntDesign } from "@expo/vector-icons";
 import { withAuth } from "./Context/AuthContext";
 import AddPayment from "./Billing/AddPayment";
 
 const SATISFIED_GREEN = "#00FA9A",
-  SATISFIED_GREEN_WITH_OPACITY = "rgba(0, 250, 154, 0.15)",
-  API_KEY = `AIzaSyCMhVeYtBerhX7ViYqNviZapS67l1Mz4U0`;
+  SATISFIED_GREEN_WITH_OPACITY = "rgba(0, 250, 154, 0.15)";
+const API_KEY = `AIzaSyCMhVeYtBerhX7ViYqNviZapS67l1Mz4U0`;
 
 export function ChangeUserInfo({ isVisible, setVisible }) {
   const [firstName, setFirstName] = useState({
@@ -35,13 +35,65 @@ export function ChangeUserInfo({ isVisible, setVisible }) {
       isValid: true,
     }),
     [address, setAddress] = useState({
-      zipCode: "",
-      street: "",
+      zipCode: {
+        value: "",
+        isValid: true,
+      },
+      street: {
+        value: "",
+        isValid: true,
+      },
       // some cities can share a zip code, so we have to point out the exact city
-      city: "",
+      city: {
+        value: "",
+        isValid: true,
+      },
     });
 
+  const zipcodeValidator = (zipcode) => {
+    const zipcodeRegex = /(^\d{5}$)|(^\d{5}-\d{4}$)/;
+    return zipcodeRegex.test(zipcode.toString());
+  };
+
   const [isPaymentVisible, setIsPaymentVisible] = useState(false);
+  const [isInfoValid, setInfoValid] = useState(true);
+
+  const checkInfoValid = () => {
+    const isFirstNameValid = firstName.value !== "",
+      isLastNameValid = lastName.value !== "",
+      isZipCodeValid = zipcodeValidator(address.zipCode.value),
+      isStreetValid = address.street.value !== "",
+      isCityValid = address.city.value !== "";
+
+    setFirstName({ ...firstName, isValid: isFirstNameValid });
+    setLastName({ ...lastName, isValid: isLastNameValid });
+    setAddress({
+      ...address,
+      zipCode: {
+        ...address.zipCode,
+        isValid: isZipCodeValid,
+      },
+      street: {
+        ...address.street,
+        isValid: isStreetValid,
+      },
+      city: {
+        ...address.city,
+        isValid: isCityValid,
+      },
+    });
+
+    const InfoValid =
+      isFirstNameValid &&
+      isLastNameValid &&
+      isStreetValid &&
+      isCityValid &&
+      isZipCodeValid;
+
+    setInfoValid(InfoValid);
+
+    return InfoValid;
+  };
 
   return (
     <withAuth.Consumer>
@@ -57,62 +109,179 @@ export function ChangeUserInfo({ isVisible, setVisible }) {
               style={styles.backButton}
               onPress={() => setVisible(false)}
             >
-              <AntDesign name="arrowleft" size={deviceWidth * 0.07} color="black" />
+              <AntDesign
+                name="arrowleft"
+                size={deviceWidth * 0.07}
+                color="black"
+              />
             </TouchableOpacity>
             <View style={{ ...styles.rowContainer, width: "100%" }}>
-              <TextInput
-                style={localStyles.inputField}
-                placeholder="First Name"
-                autoFocus={true}
-                autoCorrect={false}
-                value={firstName.value}
-                onChangeText={(value) =>
-                  setFirstName({ ...firstName, value: value })
-                }
-              />
-              <TextInput
-                style={localStyles.inputField}
-                placeholder="Last Name"
-                autoCorrect={false}
-                value={lastName.value}
-                onChangeText={(value) =>
-                  setLastName({ ...lastName, value: value })
-                }
-              />
+              <View
+                style={{
+                  width: "45%",
+                  borderWidth: firstName.isValid ? 0 : 1,
+                  borderColor: firstName.isValid
+                    ? "rgba(220,220,220, 0.5)"
+                    : "red",
+                  borderRadius: 10,
+                }}
+              >
+                <TextInput
+                  style={localStyles.inputField}
+                  placeholder="First Name"
+                  autoFocus={true}
+                  autoCorrect={false}
+                  value={firstName.value}
+                  onChangeText={(value) =>
+                    setFirstName({ ...firstName, value: value })
+                  }
+                />
+              </View>
+              <View
+                style={{
+                  width: "45%",
+                  borderWidth: lastName.isValid ? 0 : 1,
+                  borderColor: lastName.isValid
+                    ? "rgba(220,220,220, 0.5)"
+                    : "red",
+                  borderRadius: 10,
+                }}
+              >
+                <TextInput
+                  style={{ ...localStyles.inputField }}
+                  placeholder="Last Name"
+                  autoCorrect={false}
+                  value={lastName.value}
+                  onChangeText={(value) =>
+                    setLastName({ ...lastName, value: value })
+                  }
+                />
+              </View>
             </View>
-            <TextInput
+            <View
               style={{
-                ...localStyles.inputField,
                 width: "100%",
+                borderWidth: address.street.isValid ? 0 : 1,
+                borderColor: address.street.isValid
+                  ? "rgba(220,220,220, 0.5)"
+                  : "red",
+                borderRadius: 10,
                 marginVertical: deviceHeight * 0.03,
               }}
-              placeholder="Street"
-              value={address.street}
-              onChangeText={(value) => setAddress({...address, street: value})}
-            />
-            <View style={{ ...styles.rowContainer, width: "100%" }}>
+            >
               <TextInput
-                style={{ ...localStyles.inputField, width: "35%" }}
-                placeholder="Zipcode"
-                autoCorrect={false}
-                value={address.zipCode}
-                onChangeText={(value) => setAddress({...address, zipCode: value})}
-              />
-              <TextInput
-                style={{ ...localStyles.inputField, width: "55%" }}
-                placeholder="City"
-                autoCorrect={false}
-                value={address.city}
-                onChangeText={(value) => setAddress({...address, city: value})}
+                style={{
+                  ...localStyles.inputField,
+                }}
+                placeholder="Street"
+                value={address.street.value}
+                onChangeText={(value) =>
+                  setAddress({
+                    ...address,
+                    street: {
+                      ...address.street,
+                      value: value,
+                    },
+                  })
+                }
               />
             </View>
-            <TouchableOpacity style={localStyles.button} onPress={() => setIsPaymentVisible(true)}>
+            <View
+              style={{
+                ...styles.rowContainer,
+                width: "100%",
+                marginBottom: 30,
+              }}
+            >
+              <View
+                style={{
+                  width: "35%",
+                  borderWidth: address.zipCode.isValid ? 0 : 1,
+                  borderColor: address.zipCode.isValid
+                    ? "rgba(220,220,220, 0.5)"
+                    : "red",
+                  borderRadius: 10,
+                }}
+              >
+                <TextInput
+                  style={{ ...localStyles.inputField }}
+                  placeholder="Zipcode"
+                  autoCorrect={false}
+                  value={address.zipCode}
+                  onChangeText={(value) =>
+                    setAddress({
+                      ...address,
+                      zipCode: {
+                        ...address.zipCode,
+                        value: value,
+                      },
+                    })
+                  }
+                />
+              </View>
+              <View
+                style={{
+                  width: "55%",
+                  borderWidth: address.city.isValid ? 0 : 1,
+                  borderColor: address.city.isValid
+                    ? "rgba(220,220,220, 0.5)"
+                    : "red",
+                  borderRadius: 10,
+                }}
+              >
+                <TextInput
+                  style={{ ...localStyles.inputField }}
+                  placeholder="City"
+                  autoCorrect={false}
+                  value={address.city}
+                  onChangeText={(value) =>
+                    setAddress({
+                      ...address,
+                      city: {
+                        ...address.city,
+                        value: value,
+                      },
+                    })
+                  }
+                />
+              </View>
+            </View>
+            <Text
+              style={{
+                ...styles.warningText,
+                display: isInfoValid ? "none" : "flex",
+              }}
+            >
+              Please fill in your information
+            </Text>
+            <TouchableOpacity
+              style={localStyles.button}
+              onPress={() => {
+                if (checkInfoValid()) {
+                  context.setUser({
+                    ...context.user,
+                    address: {
+                      zipCode: address.zipCode.value,
+                      street: address.street.value,
+                      city: address.city.value
+                    },
+                    firstName: firstName.value,
+                    lastName: lastName.value
+                  })
+                  setIsPaymentVisible(true);
+                } else {
+                  setIsPaymentVisible(false);
+                }
+              }}
+            >
               <Text style={{ fontSize: deviceWidth * 0.05 }}>Add Payment</Text>
             </TouchableOpacity>
-            <AddPayment
-              isVisible={isPaymentVisible}
-              setVisible={setIsPaymentVisible}
-            />
+            {isPaymentVisible ? (
+              <AddPayment
+                isVisible={isPaymentVisible}
+                setVisible={setIsPaymentVisible}
+              />
+            ) : null}
           </View>
         </Modal>
       )}
@@ -142,7 +311,7 @@ const localStyles = StyleSheet.create({
   inputField: {
     paddingVertical: 0,
     fontSize: 20,
-    width: "45%",
+    width: "100%",
     height: 40,
     padding: 5,
     backgroundColor: "rgba(220,220,220, 0.5)",

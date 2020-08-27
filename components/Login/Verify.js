@@ -16,7 +16,7 @@ import {
   deviceWidth,
   MAIN_THEME_COLOR,
 } from "../../styles/mobile";
-import { AntDesign } from '@expo/vector-icons';
+import { AntDesign } from "@expo/vector-icons";
 import { withAuth } from "../Context/AuthContext";
 import { ChangeUserInfo } from "../ChangeUserInfo";
 
@@ -32,8 +32,55 @@ export default function Verify({
   const [isCodeValid, setIsCodeValid] = useState(true),
     [isChangeUserInfoVisible, setUserInfoVisible] = useState(false);
 
+  const checkCode = async (phoneNum, code) => {
+    var myHeaders = new Headers();
+    myHeaders.append("Content-Type", "application/json");
+
+    var raw = JSON.stringify({
+      phoneNum: phoneNum.toString(),
+      codeToCheck: code.toString(),
+    });
+
+    var requestOptions = {
+      method: "POST",
+      headers: myHeaders,
+      body: raw,
+      redirect: "follow",
+    };
+
+    const status = await fetch(
+      "https://spyd9htiua.execute-api.us-east-2.amazonaws.com/beta/checksmsverify?phoneNum='+19259222407'&code=08037",
+      requestOptions
+    )
+      .then((response) => response.text())
+      .then((result) => {
+        console.log(`result = ${result}`);
+        return result;
+      })
+      .catch((error) => {
+        console.log("error", error);
+        return "error";
+      });
+
+    console.log(`Hi I'm status = ${status}`);
+
+    return status;
+  };
+
   const checkVerify = async (authContext, phoneNum, code) => {
+    console.log(`verify code = ${verifyCode}`);
+    /*
+    await checkCode(phoneNum, code).then((status) => {
+      if (status === 'true') {
+        setUserInfoVisible(true);
+        setIsCodeValid(true);
+        authContext.setUser({ ...authContext, phone: phoneNum });
+      } else setIsCodeValid(false);
+      console.log(`status = ${status}`);
+    });
+    */
     setUserInfoVisible(true);
+    setIsCodeValid(true);
     authContext.setUser({ ...authContext, phone: phoneNum });
   };
 
@@ -51,7 +98,11 @@ export default function Verify({
               style={styles.backButton}
               onPress={() => setVerifyVisible(false)}
             >
-              <AntDesign name="arrowleft" size={deviceWidth * 0.07} color="black" />
+              <AntDesign
+                name="arrowleft"
+                size={deviceWidth * 0.07}
+                color="black"
+              />
             </TouchableOpacity>
             <Text style={{ ...styles.titletext }}>Verify your number</Text>
             <View style={{ padding: 2, boxSizing: "border-box" }}>

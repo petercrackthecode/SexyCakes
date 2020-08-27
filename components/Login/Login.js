@@ -51,7 +51,7 @@ let AREA_CODE = "1";
 export function Login({ isVisible, setIsVisible }) {
   const [parsedPhoneNum, setParsedPhoneNum] = useState(""),
     [isPhoneNumValid, setIsPhoneNumValid] = useState(true),
-    [isVerifyVisible, setIsVerifyVisible] = useState(false);
+    [isVerifyVisible, setIsVerifyVisible] = useState(false),
   [isMessageBeingSent, setSendStatus] = useState(false);
 
   const formatNum = (num) => {

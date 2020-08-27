@@ -12,8 +12,8 @@ const DEFAULT_USER_DATA = {
   },
   stars: 0,
   avatar: "",
-  firstName: "Peter",
-  lastName: "Nguyen",
+  firstName: "",
+  lastName: "",
   phone: "",
   email: "",
   isLoggedIn: false,
@@ -27,7 +27,6 @@ export const ProvideAuth = (props) => {
       try {
         const getUser = await AsyncStorage.getItem("user");
         getUser ? setUser(JSON.parse(getUser)) : setUser(DEFAULT_USER_DATA);
-        setUser(DEFAULT_USER_DATA);
       } catch (error) {
         setUser(DEFAULT_USER_DATA);
       }
