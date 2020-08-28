@@ -69,7 +69,6 @@ export default function Verify({
 
   const checkVerify = async (authContext, phoneNum, code) => {
     console.log(`verify code = ${verifyCode}`);
-    /*
     await checkCode(phoneNum, code).then((status) => {
       if (status === 'true') {
         setUserInfoVisible(true);
@@ -78,10 +77,6 @@ export default function Verify({
       } else setIsCodeValid(false);
       console.log(`status = ${status}`);
     });
-    */
-    setUserInfoVisible(true);
-    setIsCodeValid(true);
-    authContext.setUser({ ...authContext, phone: phoneNum });
   };
 
   return (

@@ -8,6 +8,7 @@ export const GlobalContextProvider= props => {
         viewedItem: {},
         cart: {},
         isMainHeaderVisible: true,
+        orders: []
     });
 
     return (

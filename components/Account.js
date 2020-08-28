@@ -26,12 +26,11 @@ import { Payment } from "./AccountList/Payment";
 import { GlobalContext } from "./Context/globalContext";
 
 const Stack = createStackNavigator();
+const IMAGE = require('../assets/images/sexy_cakes_logo.png');
 
 const itemsList = [
-  "Orders",
   "Profile",
   "Payment Methods",
-  "Rewards",
   "Logout",
 ].map((item, id) => ({
   item: item,
@@ -102,14 +101,9 @@ function AccountList({ navigation }) {
               }}
             >
               <Image
-                source={{
-                  uri:
-                    context.avatar === ""
-                      ? "https://encrypted-tbn0.gstatic.com/images?q=tbn%3AANd9GcQxuowyaQzhttbJEHIgSmAK-DOieEP6ixmpBA&usqp=CAU"
-                      : context.avatar,
-                }}
+                source={IMAGE}
                 style={{ ...localStyles.profilePicture }}
-                resizeMode={"cover"}
+                resizeMode={"contain"}
               />
               <View
                 style={{

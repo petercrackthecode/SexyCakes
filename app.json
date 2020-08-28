@@ -4,9 +4,9 @@
     "slug": "say-mile",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./assets/saymile.png",
+    "icon": "./assets/images/sexy_cakes_logo.png",
     "splash": {
-      "image": "./assets/saymile.png",
+      "image": "./assets/images/sexy_cakes_logo.png",
       "resizeMode": "contain",
       "backgroundColor": "#ffffff"
     },
