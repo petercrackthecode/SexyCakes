@@ -176,7 +176,7 @@ export function ViewItem({
       <View
         style={{
           ...styles.rowContainer,
-          width: "100%",
+          width: deviceWidth * 0.9,
           backgroundColor: "transparent",
         }}
       >
@@ -209,7 +209,7 @@ export function ViewItem({
           style={{
             ...styles.rowContainer,
             flex: 1,
-            height: "100%",
+            height: 40,
             paddingHorizontal: 10,
             justifyItems: "center",
             borderBottomWidth: 1,
@@ -359,7 +359,7 @@ export function ViewItem({
                       style={{
                         ...styles.rowContainer,
                         justifyContent: "space-around",
-                        width: "50%",
+                        width: deviceWidth * 0.5,
                       }}
                     >
                       <TouchableOpacity
@@ -414,7 +414,7 @@ export function ViewItem({
                   >
                     Add To Cart
                   </Text>
-                  <View style={{ position: "absolute", right: 20, top: "50%" }}>
+                  <View style={{ position: "absolute", right: 20, top: 30 }}>
                     <Text style={{ fontSize: deviceWidth * 0.05 }}>
                       $ {totalCost}
                     </Text>
@@ -435,8 +435,8 @@ const localStyles = StyleSheet.create({
   modalExitBtn: {
     position: "absolute",
     zIndex: 2,
-    top: "7%",
-    left: "7%",
+    top: 50,
+    left: 20,
   },
   image: {
     width: deviceWidth,
@@ -455,12 +455,11 @@ const localStyles = StyleSheet.create({
   },
   addToCartBtn: {
     height: 80,
-    width: "100%",
+    width: deviceWidth,
     position: "absolute",
     bottom: 0,
     left: 0,
     zIndex: 200,
-    borderRadius: deviceWidth * 0.07,
     padding: deviceWidth * 0.02,
     alignItems: "center",
     justifyContent: "center",

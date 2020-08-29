@@ -185,7 +185,7 @@ function OrderSum({ subTotal, cart, calculateSubTotal, calculateTax, tax }) {
   );
 }
 
-export default function Cart({context}) {
+export default function Cart({context, navigation}) {
   const [subTotal, setSubtotal] = useState(0),
     [tax, setTax] = useState(0);
 
@@ -207,6 +207,15 @@ export default function Cart({context}) {
     setSubtotal(newSubTotal);
     return newSubTotal;
   };
+
+  const handleCheckout = () => {
+    const currCart = _.cloneDeep(context.cart);
+    context.setGlobalState({
+      ...context,
+      orders: currCart
+    });
+    navigation.navigate('Checkout');
+  }
 
   useEffect(() => {
     console.log(`context changes`);
@@ -301,7 +310,7 @@ export default function Cart({context}) {
           </ScrollView>
           {Object.keys(context.cart).length === 0 ? null : (
             <View style={localStyles.checkoutContainer}>
-              <TouchableOpacity style={localStyles.checkoutBtn}>
+              <TouchableOpacity style={localStyles.checkoutBtn} onPress={handleCheckout}>
                 <Text style={{ fontSize: deviceWidth * 0.05 }}>
                   Proceed to Checkout
                 </Text>

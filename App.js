@@ -20,6 +20,7 @@ import {
 } from "react-native";
 import { useFonts } from "@use-expo/font";
 import Home from "./screen/MainPage/Home";
+import Checkout from "./screen/MainPage/Checkout";
 import {
   GlobalContextProvider,
   GlobalContext,
@@ -38,7 +39,7 @@ function getHeaderTitle(route) {
 
 export default function App() {
   useEffect(() => {
-    console.disableYellowBox = true;
+    //console.disableYellowBox = true;
   }, []);
 
   let [fontsLoaded] = useFonts({
@@ -71,6 +72,10 @@ export default function App() {
                             headerShown: globalContext.isMainHeaderVisible,
                             headerTitle: getHeaderTitle(route),
                           })}
+                        />
+                        <Stack.Screen
+                          name="Checkout"
+                          component={Checkout}
                         />
                       </Stack.Navigator>
                     </NavigationContainer>

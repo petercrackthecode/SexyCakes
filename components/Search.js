@@ -37,7 +37,7 @@ function SearchBox({ currentRefinement, refine, width, placeholder}) {
   return (
     <View style={{ ...localStyles.search, width: width}}>
       <TouchableOpacity>
-        <AntDesign name="search1" color={MAIN_THEME_COLOR} style={{ backgroundColor: "transparent"}}/>
+        <AntDesign name="search1" color={MAIN_THEME_COLOR} style={{ backgroundColor: "transparent"}} size={24}/>
       </TouchableOpacity>
       <TextInput
         placeholder={placeholder}

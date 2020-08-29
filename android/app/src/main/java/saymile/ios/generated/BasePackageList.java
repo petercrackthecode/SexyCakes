@@ -1,4 +1,4 @@
-package com.saymile.generated;
+package saymile.ios.generated;
 
 import java.util.Arrays;
 import java.util.List;

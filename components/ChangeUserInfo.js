@@ -25,7 +25,7 @@ const SATISFIED_GREEN = "#00FA9A",
   SATISFIED_GREEN_WITH_OPACITY = "rgba(0, 250, 154, 0.15)";
 const API_KEY = `AIzaSyCMhVeYtBerhX7ViYqNviZapS67l1Mz4U0`;
 
-export function ChangeUserInfo({ isVisible, setVisible }) {
+export function ChangeUserInfo({ setVisible, setLoginVisible }) {
   const [firstName, setFirstName] = useState({
       value: "",
       isValid: true,
@@ -98,7 +98,7 @@ export function ChangeUserInfo({ isVisible, setVisible }) {
   return (
     <withAuth.Consumer>
       {(context) => (
-        <Modal visible={isVisible} animationType="slide">
+        <Modal visible={true} animationType="slide">
           <View
             style={{
               ...styles.fullPageContainer,
@@ -280,6 +280,7 @@ export function ChangeUserInfo({ isVisible, setVisible }) {
               <AddPayment
                 isVisible={isPaymentVisible}
                 setVisible={setIsPaymentVisible}
+                setLoginVisible={setLoginVisible}
               />
             ) : null}
           </View>

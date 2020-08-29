@@ -1,4 +1,4 @@
-package com.saymile;
+package saymile.ios;
 
 import android.os.Bundle;
 

@@ -17,6 +17,11 @@ const DEFAULT_USER_DATA = {
   phone: "",
   email: "",
   isLoggedIn: false,
+  ccnumber: "",
+  exp_year: "",
+  exp_month: "",
+  cvc: "",
+  type: ""
 };
 
 export const ProvideAuth = (props) => {

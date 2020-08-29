@@ -148,7 +148,7 @@ export default function Home({ navigation, route }) {
             {() => <Shopping context={context}/>}
           </Tab.Screen>
           <Tab.Screen name="Cart">
-            {() => <Cart context={context}/>}
+            {() => <Cart context={context} navigation={navigation}/>}
           </Tab.Screen>
           <Tab.Screen name="Account">
             {() => <Account context={context}/>}

@@ -26,6 +26,7 @@ const SATISFIED_GREEN = "#00FA9A",
 export default function Verify({
   isVerifyVisible,
   setVerifyVisible,
+  setLoginVisible,
   phoneNum,
 }) {
   const [verifyCode, setVerifyCode] = useState("");
@@ -70,7 +71,7 @@ export default function Verify({
   const checkVerify = async (authContext, phoneNum, code) => {
     console.log(`verify code = ${verifyCode}`);
     await checkCode(phoneNum, code).then((status) => {
-      if (status === 'true') {
+      if (status === "true") {
         setUserInfoVisible(true);
         setIsCodeValid(true);
         authContext.setUser({ ...authContext, phone: phoneNum });
@@ -133,10 +134,7 @@ export default function Verify({
             >
               The code is invalid
             </Text>
-            <ChangeUserInfo
-              isVisible={isChangeUserInfoVisible}
-              setVisible={setUserInfoVisible}
-            />
+            {isChangeUserInfoVisible ? <ChangeUserInfo setVisible={setUserInfoVisible} setLoginVisible={setLoginVisible}/> : null}
           </View>
         </Modal>
       )}

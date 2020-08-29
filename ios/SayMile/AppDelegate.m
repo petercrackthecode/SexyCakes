@@ -4,6 +4,8 @@
 #import <React/RCTBundleURLProvider.h>
 #import <React/RCTRootView.h>
 
+#import <Stripe/Stripe.h>
+
 #import <UMCore/UMModuleRegistry.h>
 #import <UMReactNativeAdapter/UMNativeModulesProxy.h>
 #import <UMReactNativeAdapter/UMModuleRegistryAdapter.h>
@@ -72,6 +74,9 @@ static void InitializeFlipper(UIApplication *application) {
   self.window.rootViewController = rootViewController;
   [self.window makeKeyAndVisible];
 
+  self.rootViewController = rootViewController;
+  [Stripe setDefaultPublishableKey:@"pk_test_8c8fPrNtbC512mffqNRYxC5A004HG6JMcJ"];
+  
   return bridge;
  }
 

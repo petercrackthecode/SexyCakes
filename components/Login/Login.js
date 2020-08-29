@@ -48,7 +48,7 @@ const SATISFIED_GREEN = "#00FA9A",
 
 let AREA_CODE = "1";
 
-export function Login({ isVisible, setIsVisible }) {
+export function Login({ setIsVisible }) {
   const [parsedPhoneNum, setParsedPhoneNum] = useState(""),
     [isPhoneNumValid, setIsPhoneNumValid] = useState(true),
     [isVerifyVisible, setIsVerifyVisible] = useState(false),
@@ -117,7 +117,7 @@ export function Login({ isVisible, setIsVisible }) {
   };
 
   return (
-    <Modal visible={isVisible} animationType="slide">
+    <Modal visible={true} animationType="slide">
       <View
         style={{ ...styles.fullPageContainer, paddingTop: -deviceHeight * 0.1 }}
       >
@@ -182,6 +182,7 @@ export function Login({ isVisible, setIsVisible }) {
       <Verify
         isVerifyVisible={isVerifyVisible}
         setVerifyVisible={setIsVerifyVisible}
+        setLoginVisible={setIsVisible}
         phoneNum={`+${AREA_CODE}${parsedNumToTrueNum(parsedPhoneNum)}`}
       />
     </Modal>

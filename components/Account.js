@@ -17,7 +17,7 @@ import {
 } from "../styles/mobile";
 import { withAuth } from "./Context/AuthContext";
 
-import { Entypo, AntDesign } from '@expo/vector-icons';
+import { Entypo, AntDesign } from "@expo/vector-icons";
 import { createStackNavigator } from "@react-navigation/stack";
 import { Login } from "./Login/Login";
 import { Rewards } from "./AccountList/Rewards";
@@ -26,13 +26,9 @@ import { Payment } from "./AccountList/Payment";
 import { GlobalContext } from "./Context/globalContext";
 
 const Stack = createStackNavigator();
-const IMAGE = require('../assets/images/sexy_cakes_logo.png');
+const IMAGE = require("../assets/images/sexy_cakes_logo.png");
 
-const itemsList = [
-  "Profile",
-  "Payment Methods",
-  "Logout",
-].map((item, id) => ({
+const itemsList = ["Profile", "Payment Methods", "Logout"].map((item, id) => ({
   item: item,
   id: id,
 }));
@@ -58,27 +54,32 @@ const Link = ({ item, navigation }) => {
     <GlobalContext.Consumer>
       {(globalContext) => (
         <withAuth.Consumer>
-        {authContext => 
-        (<TouchableOpacity
-          style={{ ...localStyles.link, ...styles.rowContainer }}
-          onPress={() => {
-            globalContext.setGlobalState({
-              ...globalContext,
-              isMainHeaderVisible: false
-            });
-            if (item !== "Logout")
-              navigation.navigate(item);
-            else authContext.setUser(DEFAULT_USER_DATA);
-          }}
-        >
-          <View style={{ float: "left" }}>
-            <Text style={{ fontSize: deviceWidth * 0.05 }}>{item}</Text>
-          </View>
-          <View style={{ float: "right" }}>
-            <Entypo name="chevron-right" size={deviceWidth * 0.05} color="black" />
-          </View>
-        </TouchableOpacity>)
-        }
+          {(authContext) => (
+            <TouchableOpacity
+              style={{ ...localStyles.link, ...styles.rowContainer }}
+              onPress={() => {
+                globalContext.setGlobalState({
+                  ...globalContext,
+                  isMainHeaderVisible: false,
+                });
+                if (item !== "Logout") navigation.navigate(item);
+                else {
+                  authContext.setUser({...authContext, isLoggedIn: false});
+                }
+              }}
+            >
+              <View style={{ float: "left" }}>
+                <Text style={{ fontSize: deviceWidth * 0.05 }}>{item}</Text>
+              </View>
+              <View style={{ float: "right" }}>
+                <Entypo
+                  name="chevron-right"
+                  size={deviceWidth * 0.05}
+                  color="black"
+                />
+              </View>
+            </TouchableOpacity>
+          )}
         </withAuth.Consumer>
       )}
     </GlobalContext.Consumer>
@@ -122,7 +123,11 @@ function AccountList({ navigation }) {
                     marginTop: 10,
                   }}
                 >
-                  <AntDesign name="star" size={deviceWidth * 0.07} color={MAIN_THEME_COLOR} />
+                  <AntDesign
+                    name="star"
+                    size={deviceWidth * 0.07}
+                    color={MAIN_THEME_COLOR}
+                  />
                   <Text
                     style={{ paddingLeft: 10, fontSize: deviceWidth * 0.06 }}
                   >
@@ -185,10 +190,7 @@ export default function Account() {
             >
               <Text>Login/Sign up</Text>
             </TouchableOpacity>
-            <Login
-              isVisible={isLoginVisible}
-              setIsVisible={setIsLoginVisible}
-            />
+            {isLoginVisible ? <Login setIsVisible={setIsLoginVisible} /> : null}
           </View>
         )
       }
