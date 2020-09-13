@@ -56,7 +56,7 @@ function Items({ hits, hasMore, refineNext }) {
                   }}
                 >
                   <Image
-                    source={require("../assets/images/sexy_cakes_logo.jpg")}
+                    source={{uri: item.images}}
                     style={localStyles.itemImage}
                     resizeMode="contain"
                   />

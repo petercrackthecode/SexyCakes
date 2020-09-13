@@ -31,6 +31,7 @@ export function ViewItem({
   variants,
   add_ons,
   setIsVisible,
+  images,
 }) {
   const [requiredSelection, setRequired] = useState({});
   const [currentAmount, setCurrentAmount] = useState(1);
@@ -280,7 +281,7 @@ export function ViewItem({
               </TouchableOpacity>
               <View>
                 <Image
-                  source={require("../assets/images/sexy_cakes_logo.jpg")}
+                  source={{uri: images}}
                   resizeMode="cover"
                   style={localStyles.image}
                 />

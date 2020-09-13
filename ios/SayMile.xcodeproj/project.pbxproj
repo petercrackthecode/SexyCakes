@@ -14,6 +14,7 @@
 		3E461D99554A48A4959DE609 /* SplashScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = AA286B85B6C04FC6940260E9 /* SplashScreen.storyboard */; };
 		477F9DCE24F9916C00BE2C65 /* CheckoutViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 477F9DCD24F9916C00BE2C65 /* CheckoutViewController.m */; };
 		477F9DD124FA183700BE2C65 /* StripeBridge.m in Sources */ = {isa = PBXBuildFile; fileRef = 477F9DD024FA183700BE2C65 /* StripeBridge.m */; };
+		47A4F63C250A905F0001E96C /* main.jsbundle in Resources */ = {isa = PBXBuildFile; fileRef = 008F07F21AC5B25A0029DE68 /* main.jsbundle */; };
 		96905EF65AED1B983A6B3ABC /* libPods-SayMile.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 58EEBF8E8E6FB1BC6CAF49B5 /* libPods-SayMile.a */; };
 		BB2F792D24A3F905000567C9 /* Expo.plist in Resources */ = {isa = PBXBuildFile; fileRef = BB2F792C24A3F905000567C9 /* Expo.plist */; };
 /* End PBXBuildFile section */
@@ -190,6 +191,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				47A4F63C250A905F0001E96C /* main.jsbundle in Resources */,
 				BB2F792D24A3F905000567C9 /* Expo.plist in Resources */,
 				13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */,
 				13B07FBD1A68108700A75B9A /* LaunchScreen.xib in Resources */,
